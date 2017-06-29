@@ -40,11 +40,16 @@ func main() {
 	// Create STS service
 	svc := sts.New(sess, aws.NewConfig().WithRegion("us-west-2"))
 
+        contents, err := ioutil.ReadFile("policy.json")
+        if err != nil {
+		log.Fatalf("Error reading policy file: %s", err)
+	}
+
 	// Create params for GetFederationToken()
 	params := &sts.GetFederationTokenInput{
 		DurationSeconds: aws.Int64(*expiry),
 		Name:            aws.String(*user),
-		Policy:          aws.String(`{"Version": "2012-10-17","Statement": [{"Action": "ec2:*","Effect": "Allow","Resource": "*"},{"Effect": "Allow","Action": ["iam:GetSSHPublicKey","iam:ListSSHPublicKeys","iam:UpdateSSHPublicKey","iam:UploadSSHPublicKey"],"Resource": ["*"]}]}`),
+		Policy:          aws.String(string(contents)),
 	}
 	resp, err := svc.GetFederationToken(params)
 	if err != nil {
