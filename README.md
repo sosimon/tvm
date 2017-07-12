@@ -16,11 +16,14 @@ Setup AWS credentials the same way you would for AWS CLI. See [SDK Configuration
 ## Usage
 
 ```
-tvm [-u tempUsername] [-x sessionDuration]
+tvm [-p profile] [-u tempUsername] [-x sessionDuration]
 ```
 
-`tempUsername` defaults to `temp-user` if none is specified.
-`sessionDuration` is in seconds and defaults to 900 seconds if none are
+`profile` AWS credential profile, defaults to the default profile if none is specified.
+
+`tempUsername` username associated with the temporary credentials, defaults to `temp-user` if none is specified.
+
+`sessionDuration` is in seconds, defaults to 900 seconds if none are
 specified.
 
 `tvm` tries to read a policy file `policy.json` in the same directory. If the policy file is not present, it will default to allow all on all resources. The generated credentials will still end up having permissions that are the intersection of this and the permissions of the IAM user used to call this tool (you can't have more permissions than the IAM user used!) 

@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/fatih/color"
@@ -31,12 +32,16 @@ type SigninTokenResp struct {
 }
 
 func main() {
+	profile := flag.String("p", "default", "AWS credential profile")
 	user := flag.String("u", "test-user", "Name of temporary user")
 	expiry := flag.Int64("x", 900, "Credentials expiration time in seconds")
 	flag.Parse()
 
 	// Create Session
-	sess := session.Must(session.NewSession())
+	sess := session.Must(session.NewSession(&aws.Config{
+		Region:      aws.String("us-west-2"),
+		Credentials: credentials.NewSharedCredentials("", *profile),
+	}))
 
 	// Create STS service
 	svc := sts.New(sess, aws.NewConfig().WithRegion("us-west-2"))
@@ -44,7 +49,7 @@ func main() {
 	default_policy := `{"Version":"2012-10-17","Statement": [{"Action": "*","Effect": "Allow","Resource": "*"}]}`
 	var policy string
 	if _, err := os.Stat("policy.json"); err == nil {
-        	contents, err := ioutil.ReadFile("policy.json")
+		contents, err := ioutil.ReadFile("policy.json")
 		if err != nil {
 			log.Fatalf("Error reading policy file: %s", err)
 		}
