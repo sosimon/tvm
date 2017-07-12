@@ -5,7 +5,7 @@ The vending machine generates temporary credentials to your AWS account - access
     1. The policy that is passed into the `GetFederationToken` call, and
     2. Policies that are attached to the IAM user whose credentials were used to all `GetFederationToken`.
 
-See [docs](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp_control-access_getfederationtoken.html) for more details. Currently, the policy passed into `GetFederationToken` is hardcoded to allow full access to EC2 and to manage SSH key pairs.
+See [docs](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp_control-access_getfederationtoken.html) for more details.
 
 The temporary credentials are defaulted to expire after 15 minutes (900 seconds), which is the minimum session duration. A longer expiration can be specified, in seconds, using the `-x` flag, up to 36 hours (129600 seconds).
 
