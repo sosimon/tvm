@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -40,16 +41,24 @@ func main() {
 	// Create STS service
 	svc := sts.New(sess, aws.NewConfig().WithRegion("us-west-2"))
 
-        contents, err := ioutil.ReadFile("policy.json")
-        if err != nil {
-		log.Fatalf("Error reading policy file: %s", err)
+	default_policy := `{"Version":"2012-10-17","Statement": [{"Action": "*","Effect": "Allow","Resource": "*"}]}`
+	var policy string
+	if _, err := os.Stat("policy.json"); err == nil {
+        	contents, err := ioutil.ReadFile("policy.json")
+		if err != nil {
+			log.Fatalf("Error reading policy file: %s", err)
+		}
+		policy = string(contents)
+	}
+	if policy == "" {
+		policy = default_policy
 	}
 
 	// Create params for GetFederationToken()
 	params := &sts.GetFederationTokenInput{
 		DurationSeconds: aws.Int64(*expiry),
 		Name:            aws.String(*user),
-		Policy:          aws.String(string(contents)),
+		Policy:          aws.String(policy),
 	}
 	resp, err := svc.GetFederationToken(params)
 	if err != nil {
