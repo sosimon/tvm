@@ -36,13 +36,9 @@ func main() {
 		log.Fatalf("Error requesting temporary credentials: %s", err)
 	}
 
-	outputString := exportString("AWS_ACCESS_KEY_ID", *output.Credentials.AccessKeyId) +
-		exportString("AWS_SECRET_ACCESS_KEY", *output.Credentials.SecretAccessKey) +
-		exportString("AWS_SESSION_TOKEN", *output.Credentials.SessionToken) +
-		exportString("AWS_DEFAULT_REGION", *region)
+	outputString := fmt.Sprintf("export %s=%s;", "AWS_ACCESS_KEY_ID", *output.Credentials.AccessKeyId) +
+		fmt.Sprintf("export %s=%s;", "AWS_SECRET_ACCESS_KEY", *output.Credentials.SecretAccessKey) +
+		fmt.Sprintf("export %s=%s;", "AWS_SESSION_TOKEN", *output.Credentials.SessionToken) +
+		fmt.Sprintf("export %s=%s;", "AWS_DEFAULT_REGION", *region)
 	fmt.Println(outputString)
-}
-
-func exportString(key string, val string) string {
-	return fmt.Sprintf("export %s=%s;", key, val)
 }
